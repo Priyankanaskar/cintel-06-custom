@@ -10,6 +10,7 @@ from shiny import reactive, render, req
 from shiny.express import input, ui
 import random
 from datetime import datetime
+from datetime import date, timedelta
 from collections import deque
 import pandas as pd
 from scipy import stats
@@ -48,7 +49,7 @@ bill_rng = (min(tips.total_bill), max(tips.total_bill))
 # Add page title and sidebar
 ui.page_opts(title="Kansas Barbecue Dashboard", fillable=True)
 
-with ui.sidebar(open="desktop"):
+with ui.sidebar(open="desktop",style="background-color: #e0ffff"):
     ui.input_slider(
         "total_bill",
         "Bill amount",
@@ -65,6 +66,9 @@ with ui.sidebar(open="desktop"):
         inline=True,
     )
     ui.input_action_button("reset", "Reset filter")
+    
+    # Default value is the date in client's time zone
+    ui.input_date("date2", "Date:")
 
     ui.hr()
     ui.h6("Links:")
@@ -75,11 +79,10 @@ with ui.sidebar(open="desktop"):
     )
 
     ui.a("PyShiny", href="https://shiny.posit.co/py/", target="_blank")
-    ui.a(
-        "PyShiny Express",
-        href="hhttps://shiny.posit.co/blog/posts/shiny-express/",
-        target="_blank",
-    )
+    
+    ui.a("PyShiny Express",
+        href="https://shiny.posit.co/py/api/express/", target= "_blank")
+    
 # In Shiny Express, everything not in the sidebar is in the main panel--------------------------------------------------
 
 ui.input_action_button("do_compute", "Tip Calculator")
@@ -101,14 +104,17 @@ async def compute():
 # Add main content
 ICONS = {
     "user": fa.icon_svg("user", "regular"),
+    
     "wallet": fa.icon_svg("wallet"),
+    
     "currency-dollar": fa.icon_svg("dollar-sign"),
+    
     "gear": fa.icon_svg("gear"),
 }
 
 with ui.layout_columns(fill=False):
     with ui.value_box(showcase=ICONS["user"]):
-        style = "blue"
+        
         "Total tippers"
 
         @render.express
