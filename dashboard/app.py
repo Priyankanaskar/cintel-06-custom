@@ -14,6 +14,7 @@ from datetime import date, timedelta
 from collections import deque
 import pandas as pd
 from scipy import stats
+import shinyswatch
 
 # Original UI layout and style setup
 ui.HTML(
@@ -25,7 +26,7 @@ ui.HTML(
     font-family: Arial-bold, gothic;
     font-size: 16px; 
     font-weight: normal; 
-    font-style: normal; 
+    font-style: bold; 
     text-decoration: none; 
     text-transform: none; 
     line-height: 1.5; 
@@ -41,13 +42,15 @@ ui.HTML(
 """
 )
 
-
 # Load data and compute static values
 tips = px.data.tips()
 bill_rng = (min(tips.total_bill), max(tips.total_bill))
 
 # Add page title and sidebar
-ui.page_opts(title="Kansas Barbecue Dashboard", fillable=True)
+ui.page_opts(title="Kansas Barbecue Dashboard", fillable=True,)
+
+# Theme
+shinyswatch.theme.materia()
 
 with ui.sidebar(open="desktop",style="background-color: #e0ffff"):
     ui.input_slider(
@@ -80,9 +83,9 @@ with ui.sidebar(open="desktop",style="background-color: #e0ffff"):
 
     ui.a("PyShiny", href="https://shiny.posit.co/py/", target="_blank")
     
-    ui.a("PyShiny Express",
+    ui.a("Pyshiny Express",
         href="https://shiny.posit.co/py/api/express/", target= "_blank")
-    
+   
 # In Shiny Express, everything not in the sidebar is in the main panel--------------------------------------------------
 
 ui.input_action_button("do_compute", "Tip Calculator")
@@ -113,7 +116,7 @@ ICONS = {
 }
 
 with ui.layout_columns(fill=False):
-    with ui.value_box(showcase=ICONS["user"]):
+    with ui.value_box(showcase=ICONS["user"],theme="bg-gradient-blue-red"):
         
         "Total tippers"
 
@@ -121,7 +124,7 @@ with ui.layout_columns(fill=False):
         def total_tippers():
             tips_data().shape[0]
 
-    with ui.value_box(showcase=ICONS["wallet"]):
+    with ui.value_box(showcase=ICONS["wallet"],theme="bg-gradient-blue-red"):
         "Average tip"
 
         @render.express
@@ -131,7 +134,7 @@ with ui.layout_columns(fill=False):
                 perc = d.tip / d.total_bill
                 f"{perc.mean():.1%}"
 
-    with ui.value_box(showcase=ICONS["currency-dollar"]):
+    with ui.value_box(showcase=ICONS["currency-dollar"],theme="bg-gradient-blue-red"):
         "Average bill"
 
         @render.express
@@ -143,16 +146,16 @@ with ui.layout_columns(fill=False):
 
 
 with ui.layout_columns(col_widths=[6, 6, 12]):
-    with ui.card(full_screen=True):
-        ui.card_header("Tips data")
-
+    with ui.card(full_screen=True, style="background-color: #e6e6fa "):
+        ui.card_header("Tips Table ")
+        ICONS["user"]
         @render.data_frame
         def table():
             return render.DataGrid(tips_data())
 
-    with ui.card(full_screen=True):
+    with ui.card(full_screen=True ,style="background-color: #e6e6fa "):
         with ui.card_header(class_="d-flex justify-content-between align-items-center"):
-            "Total bill vs tip"
+            "Weekly bill vs tip"
             with ui.popover(title="Add a color variable", placement="top"):
                 ICONS["gear"]
                 ui.input_radio_buttons(
@@ -173,9 +176,9 @@ with ui.layout_columns(col_widths=[6, 6, 12]):
                 trendline="lowess",
             )
 
-    with ui.card(full_screen=True):
+    with ui.card(full_screen=True,style="background-color: #e6e6fa "):
         with ui.card_header(class_="d-flex justify-content-between align-items-center"):
-            "Tip percentages"
+            "Tip Percentages"
             with ui.popover(title="Add a color variable"):
                 ICONS["gear"]
                 ui.input_radio_buttons(
